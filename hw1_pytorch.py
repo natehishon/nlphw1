@@ -1,4 +1,8 @@
 # q-5
+from six.moves import urllib
+opener = urllib.request.build_opener()
+opener.addheaders = [('User-agent', 'Mozilla/5.0')]
+urllib.request.install_opener(opener)
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -18,7 +22,6 @@ train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=bat
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=False)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-
 class FC_NN(nn.Module):
 
     def __init__(self, input_size, num_classes):
@@ -33,17 +36,14 @@ class FC_NN(nn.Module):
         x = self.output(x)
         return x
 
-
 def process(outputs):
     encoded = [onehot(output.item()) for output in outputs]
     return torch.tensor(encoded)
-
 
 def onehot(output):
     x = [0.0 for _ in range(num_classes)]
     x[output] = 1.0
     return x
-
 
 model = FC_NN(input_size=input_size, num_classes=num_classes).to(device)
 
@@ -80,7 +80,6 @@ def evaluate_accuracy(data, model, data_type):
     print(data_type + " accuracy: {}".format(accuracy))
 
     model.train()
-
 
 evaluate_accuracy(train_loader, model, "Training Set")
 evaluate_accuracy(test_loader, model, "Testing Set")
